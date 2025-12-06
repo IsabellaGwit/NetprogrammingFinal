@@ -1,0 +1,67 @@
+$ = start of command 
+Sorces:
+# https://kb.isc.org/docs/isc-dhcp-44-manual-pages-dhcpd
+# https://help.ubuntu.com/community/isc-dhcp-server
+
+Installation: 
+$ sudo apt-get install isc-dhcp-server 
+--------------------------------------------
+Configuration: 
+$ sudo nano /etc/dhcp/dhpcd.conf
+
+# Sample /etc/dhcpd.conf  --> from ubuntu.com 
+# (add your comments here) 
+default-lease-time 600;
+max-lease-time 7200;
+option subnet-mask 255.255.255.0;
+option broadcast-address 192.168.1.255;
+option routers 192.168.1.254;
+option domain-name-servers 192.168.1.1, 192.168.1.2;
+option domain-name "mydomain.example";
+
+subnet 192.168.1.0 netmask 255.255.255.0 {
+range 192.168.1.10 192.168.1.100;
+range 192.168.1.150 192.168.1.200;
+} 
+
+For my vm set up to be able to download the isc-dhcp server it needed internet access and I wanted a closed network for the others - so the vm used two interfaces one on brigde and the other on internal
+with the other 2 vms i put them on the same internal network 
+can slod be predownloaded then change network setting in vm setting
+
+To change Network Settings: 
+$ sudo nano /etc/network/interfaces
+
+Example of ours: 
+-----------------------------------------
+auto lo
+iface lo inet loopback
+auto eth1
+iface eth1 inet manual
+
+auto eth1 
+iface eth1 inet static
+    address 192.168.1.1
+    netmask 255.255.255.0
+------------------------------------------
+
+Start and stop: 
+$ sudo service isc-dhcp-server restart
+$ sudo service isc-dhcp-server start
+$ sudo service isc-dhcp-server stop 
+
+-----------------------------------------------
+
+To see leased addresssess:
+$ dhcp-lease-list --lease /var/lib/dhcp/dhcpd.leases 
+
+------------------------------------------------
+
+A good check for if yersinia is running well: is to also download dhclient 
+
+Install: 
+$ sudo apt install isc-dhcp-client
+
+$ sudo dhclient -r ---> to release ip 
+$ sudo dhclient  ---> to renew lease 
+
+if yersinia is working well it will stall on the lease 
