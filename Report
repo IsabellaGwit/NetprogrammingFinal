@@ -1,0 +1,67 @@
+Final Project
+
+
+Introduction
+
+Preventative measures against adversarial attacks within a network can be difficult to
+implement without knowledge of how these attacks begin and how they traverse through the
+system. Our project aims to fill this knowledge gap by administering a controlled attack against a
+network and implementing an intrusion detection system.
+Relevant Work
+Yersinia is a Kali Linux tool used to exploit vulnerabilities within the datalink layer’s
+protocols. It can launch various attacks such as DoS and MitM against these protocols.
+Yersinia’s easy deployment makes it a great tool for administering the attack.
+One of the protocols Yersinia attacks within the datalink layer is the Dynamic Host
+Configuration Protocol, also known as DHCP. DHCP is responsible for leasing IP addresses to
+devices as they connect to a network. This protocol is commonly used for wireless LANs that
+use Wi-Fi where devices frequently connect or disconnect from the network, as it removes the
+time-consuming manual configuration of a new IP address every time a device connects.
+Yersinia performs a DHCP starvation attack where it outputs requests for IPs from a single point
+that spoofs fake MAC addresses. This attack exhausts the server’s pool of available IP addresses
+and makes it so new devices cannot connect to the network.
+
+Description
+
+On our current small scale, the network would be local to one device and built using
+multiple virtual machines running on Kali Linux. One virtual machine would work as the
+network’s DHCP server, one serves as an attacker, and another as the client. The DHCP server
+was configured using isc-dhcp-sever and sets up an internal network on the eth1 interface to
+interact with the other virtual machines. Its set capability is to provide ~190 IP addresses on a
+default lease of 600 seconds. Using virtual machines to create our network ensures safety for our
+real devices and public networks.
+To monitor the network during controlled attack, we have built an intrusion detection
+system that alerts administrative users to irregular network activity. Our IDS operates at the
+network layer and observes DHCP traffic across the local network. Because DHCP Discover
+messages are broadcast to devices on the LAN, this provides a reliable vantage point for
+detecting anomalies.
+The IDS is implemented in Bash and uses ‘tcpdump’ to sniff UDP packets on ports 67
+and 68, where DHCP usually places communications. Every DISCOVER message seen on the
+network increments an internal counter. The script processes packets in one-second sampling
+windows and evaluates the total number of Discover requests over ten second intervals. The
+sliding window approach allows IDS to see the difference between normal network activity and
+the attack caused by an external machine.
+At the end of each ten second window, the IDS compares the accumulated Discover
+count to a predefined threshold. If the count exceeds this limit, the script raises an alert indicating
+that abnormal DHCP activity has been detected. This gives us clear and fast feedback about
+possible attacks going on without interrupting the network or requiring any specialized hardware.
+By relying on simple command line tools and transparent logic, our IDS is easy to modify
+and/or extend. The threshold can be adjusted depending on the network’s expected load, and
+additional detection rules can be added to monitor other DHCP messages or maybe even
+additional protocols. But even if it is lightweight, this system effectively demonstrates how IDS
+mechanisms can flag malicious behavior during DHCP based attacks.
+
+Conclusions & Future Work
+A large part of why DHCP is vulnerable to these attacks comes to its lack of base
+authentication. As such, implementing authentication to some degree could defend against these
+types of attacks. A portion of the server’s IP addresses could be reserved for MAC addresses that
+have been authenticated after a previous handshake. This would, in theory, eliminate the issue of
+real devices being disconnected from the network after their IP address lease ends.
+In future work, a more complete IDS will implement detection capabilities for all the
+protocols that Yersinia attacks. One such protocol that we currently couldn’t implement
+detection for was the Cisco Discovery protocol as it requires cisco manufactured equipment
+within the network which we did not have access to. We also would like to work the IDS to
+detect VLAN deletion/injection. Testing this IDS through the VM network is restrictive to the
+CPU power of the device running the network so we would need to establish the VM network in
+a higher CPU device.
+7
+References
