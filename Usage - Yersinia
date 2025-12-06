@@ -1,0 +1,35 @@
+# $ shows start of command line
+# Yersinia is VERY case senstive 
+
+We ran in kali linux 
+
+Yersinia: 
+----------------------------------------------------------------------
+Installation: 
+$ sudo apt install yersinia 
+----------------------------------------------------------------------
+Commands: 
+to launch - $ sudp yersinia -I 
+
+Attack Types: --> changes via function keys 
+-F1:cdp mode 
+-F2:DHCP mode 
+-F3:802.1q mode
+-F4:802.1x mode
+-F5:DTP mode
+-F6:HSRP mode 
+-F7:ISL mode 
+-F9:MPLS mode
+-F10:VPT mode
+
+To Select attack type:
+press x (lowercase) then press the number launch the sub attack type 
+
+To Stop Attack: 
+Press K (upper case) Then to fully cancle Press Y (upper Case)
+----------------------------------------------------------------------
+Extra Notes:
+- When lauched into yersinia the first question it will ask if what interface you want to use if only 1 is added to the vm it will defult two eth0 
+- Yersinia acts very simualar to wire shark in that it shows what is being send and recived in the network so somtimes in the controle panel for yersinia you will see ack messages come thought other then the attack you are running 
+- Press h (lower case) to see a list of controles for yersinia
+- you are able to turn off MAC spooffing in yersinia but it is enables by defualt. 
